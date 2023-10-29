@@ -18,14 +18,14 @@ export default class PathfindingVisualizer extends Component {
 
   componentDidMount() {
     const nodes = [];
-    for (let row = 0; row < 15; row ++){
+    for (let row = 0; row < 20; row ++){
         const currentRow = [];
         for (let col = 0; col < 50; col++){
             const currentNode = {
                 col,
                 row,
                 isStart: row == 10 && col == 5,
-                isFinish: row == 10 && col == 45,
+                isFinish: row == 15 && col == 45,
             }
             currentRow.push(currentNode);
         }
@@ -50,7 +50,7 @@ export default class PathfindingVisualizer extends Component {
                                 <Node 
                                     key={nodeIdx} 
                                     isStart={isStart} 
-                                    isFinish ={isFinish}
+                                    isFinish={isFinish}
                                     test={'foo'} 
                                     ></Node>
                                 );
