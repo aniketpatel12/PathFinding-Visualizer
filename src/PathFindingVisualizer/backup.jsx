@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import Node from './Node/Node';
-import { aStarSearch, getNodesInShortestPathOrder  } from '../Algorithms/astarsearch';
-import { dijkstra } from '../Algorithms/dijkstra';
+import { dijkstra, getNodesInShortestPathOrder } from '../Algorithms/dijkstra';
 
 import './PathfindingVisualizer.css';
 
-const START_NODE_ROW = 5;
+const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
-const TARGET_NODE_ROW = 0;
-const TARGET_NODE_COL = 0;
+const TARGET_NODE_ROW = 10;
+const TARGET_NODE_COL = 35;
 
 export default class PathfindingVisualizer extends Component {
   constructor() {
@@ -17,11 +16,10 @@ export default class PathfindingVisualizer extends Component {
       grid: [],
       mouseIsPressed: false,
       animationSpeed: 10,
+      isPaused: false,
       timeouts: [], // Ensure timeouts is properly initialized as an empty array
       disableDropDown: false,
       isVisualized: false,
-      isPaused: false,
-      currentStep: 0,
     };
     this.handleAnimationSpeedChange = this.handleAnimationSpeedChange.bind(this);
     this.handlePauseContinue = this.handlePauseContinue.bind(this);
@@ -49,16 +47,16 @@ export default class PathfindingVisualizer extends Component {
   }
 
   handlePauseContinue() {
-    const { isPaused, currentStep, timeouts, isVisualized } = this.state;
-    if (isVisualized) {
+    const { isPaused, timeouts, isVisualized } = this.state;
+    if (isVisualized && timeouts) {
       if (isPaused) {
-        this.setState({ isPaused: false }, () => this.animateDijkstra(currentStep));
+        this.setState({ isPaused: false });
+        this.animateDijkstra(this.state.currentStep);
       } else {
-        this.setState({ isPaused: true }, () => {
-          for (let i = currentStep; i < timeouts.length; i++) {
-            clearTimeout(timeouts[i]);
-          }
-        });
+        this.setState({ isPaused: true });
+        for (let i = 0; i < timeouts.length; i++) {
+          clearTimeout(timeouts[i]);
+        }
       }
     }
   }
@@ -92,73 +90,41 @@ export default class PathfindingVisualizer extends Component {
     this.setState({ grid: newGrid, disableDropDown: false, isVisualized: false });
   }
 
-  animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
-    const { animationSpeed } = this.state;
-    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-      if (i === visitedNodesInOrder.length) {
-        setTimeout(() => {
-          this.animateShortestPath(nodesInShortestPathOrder);
-        }, animationSpeed * i);
-        return;
-      }
-      setTimeout(() => {
-        const node = visitedNodesInOrder[i];
-        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+  animateDijkstra(step) {
+    const { animationSpeed, isPaused, visitedNodesInOrder, nodesInShortestPathOrder } = this.state;
+    let currentStep = step || 0;
+    if (!this.state.timeouts) {
+      this.setState({ timeouts: [] });
+    }
+    for (let i = currentStep; i < visitedNodesInOrder.length; i++) {
+      const timeout = setTimeout(() => {
+        if (!isPaused) {
+          const node = visitedNodesInOrder[i];
+          // Update UI here for visited node
+          if (i === visitedNodesInOrder.length - 1) {
+            this.animateShortestPath(nodesInShortestPathOrder);
+          }
         }
-        setTimeout(() => {
-          this.setState({ isVisualized: false, disableDropDown: false });
-        }, animationSpeed * i);
       }, animationSpeed * i);
+      this.setState(prevState => ({ timeouts: [...prevState.timeouts, timeout] }));
     }
-  }
-
-  // Animate A* Search
-  animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder) {
-    const { animationSpeed } = this.state;
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-        setTimeout(() => {
-            const node = visitedNodesInOrder[i];
-            const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-            if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
-            }
-        }, animationSpeed * i);
-    }
-
-    setTimeout(() => {
-        this.animateShortestPathAStar(nodesInShortestPathOrder);
-        setTimeout(() => {
-          this.setState({ isVisualized: false, disableDropDown: false });
-      }, animationSpeed * visitedNodesInOrder.length);
-    }, animationSpeed * visitedNodesInOrder.length);
-  }
-
-  animateShortestPathAStar(nodesInShortestPathOrder) {
-    const { animationSpeed } = this.state;
-    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-        setTimeout(() => {
-            const node = nodesInShortestPathOrder[i];
-            const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-            if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
-            }
-        }, animationSpeed * i);
-    }
+    this.setState({ currentStep });
   }
   
+
   animateShortestPath(nodesInShortestPathOrder) {
-    const { animationSpeed } = this.state;
-    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-      setTimeout(() => {
-        const node = nodesInShortestPathOrder[i];
-        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
-        }
-      }, animationSpeed * i);
+    const { animationSpeed, isPaused } = this.state;
+    let currentStep = this.state.currentStep || 0;
+    for (let i = currentStep; i < nodesInShortestPathOrder.length; i++) {
+        const timeout = setTimeout(() => {
+            if (!isPaused) {
+                const node = nodesInShortestPathOrder[i];
+                // Update UI here for shortest path node
+            }
+        }, animationSpeed * i);
+        this.state.timeouts.push(timeout);
     }
+    this.setState({ currentStep: 0 });
   }
 
   handleMouseUp() {
@@ -171,25 +137,14 @@ export default class PathfindingVisualizer extends Component {
     const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
     const visitedNodesInOrder = dijkstra(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
-    this.setState({ isVisualized: true });
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-  }
-
-  VisualizeAStarSearch() {
-    console.log("Inside VisualizeAStarSearch()...");
-    const { grid } = this.state;
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
-    const visitedNodesInOrder = aStarSearch(grid, startNode, targetNode);
-    const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
   render(){
     
-    const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
-    console.log({ isVisualized, disableDropDown });
+    const {grid, mouseIsPressed, animationSpeed, disableDropDown, isVisualized, isPaused} = this.state;
+    // console.log(nodes)
     
     return(
         <>
@@ -198,18 +153,15 @@ export default class PathfindingVisualizer extends Component {
               onChange={this.handleAnimationSpeedChange}
               disabled={disableDropDown || isVisualized}>
                 <option value="10">Fastest</option>
-                <option value="20">Fast</option>
-                <option value="50">Normal</option>
-                <option value="70">Slow</option>
-                <option value="100">Slowest</option>
+                <option value="50">Fast</option>
+                <option value="100">Normal</option>
+                <option value="200">Slow</option>
+                <option value="500">Slowest</option>
             </select>
             <button onClick={() => this.VisualizeDijkstra()} disabled={disableDropDown || isVisualized}>
                 Visualize Dijkstra'S Algorithm
             </button>
-            <button onClick={() => this.VisualizeAStarSearch()} disabled={disableDropDown || isVisualized}>
-                Visualize A* Algorithm
-            </button>
-            <button onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
+            <button onClick={() => this.clearAll()}>
                 Clear All
             </button>
             <button onClick={this.handlePauseContinue} disabled={!isVisualized} className="pause-continue-btn">
