@@ -100,5 +100,48 @@
     margin-bottom: 20px;
   }
   
-  /* ... (rest of the css) */
+  button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
   
+  button:hover {
+    background-color: #388e3c;
+  }
+  
+  .alert {
+    background-color: #f44336;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .closebtn:hover {
+    color: black;
+  }
+
+
+  button:disabled {
+    background-color: lightgray; /* Change this color to the desired disabled color */
+    color: white; /* Change this color to the desired text color when disabled */
+  }

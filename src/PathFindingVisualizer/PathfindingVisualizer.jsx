@@ -6,9 +6,9 @@ import { dijkstra } from '../Algorithms/dijkstra';
 import './PathfindingVisualizer.css';
 
 const START_NODE_ROW = 5;
-const START_NODE_COL = 15;
-const TARGET_NODE_ROW = 0;
-const TARGET_NODE_COL = 0;
+const START_NODE_COL = 10;
+const TARGET_NODE_ROW = 15;
+const TARGET_NODE_COL = 40;
 
 export default class PathfindingVisualizer extends Component {
   constructor() {
@@ -24,7 +24,7 @@ export default class PathfindingVisualizer extends Component {
       currentStep: 0,
     };
     this.handleAnimationSpeedChange = this.handleAnimationSpeedChange.bind(this);
-    this.handlePauseContinue = this.handlePauseContinue.bind(this);
+    // this.handlePauseContinue = this.handlePauseContinue.bin  d(this);
     this.clearTimeouts = this.clearTimeouts.bind(this);
   }
 
@@ -38,39 +38,63 @@ export default class PathfindingVisualizer extends Component {
   }
 
   handleMouseDown(row, col) {
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({grid: newGrid, mouseIsPressed: true});
+    const { grid } = this.state;
+    const node = grid[row][col];
+
+    if (node.isStart){
+      this.setState({ mouseIsPressed: true, movingStartNode: true });
+    }else if(node.isFinish){
+      this.setState({ mouseIsPressed: true, movingTargetNode: true });
+    }else{
+      const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+      this.setState({grid: newGrid, mouseIsPressed: true});
+    }
   }
 
   handleMouseEnter(row, col) {
-    if (!this.state.mouseIsPressed) return;
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({grid: newGrid});
+
+    if(!this.state.mouseIsPressed) return;
+
+    const { grid, movingStartNode, movingTargetNode }= this.state;
+
+    if(movingStartNode){
+      const newGrid = getNewGridWithNewStart(grid, row, col);
+      this.setState({ grid: newGrid });
+    }else if(movingTargetNode){
+      const newGrid = getNewGridWithNewTarget(grid, row, col);
+      this.setState({ grid: newGrid });
+    }else{
+      const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+      this.setState({grid: newGrid});
+    }    
   }
 
-  handlePauseContinue() {
-    const { isPaused, currentStep, timeouts, isVisualized } = this.state;
-    if (isVisualized) {
-      if (isPaused) {
-        this.setState({ isPaused: false }, () => this.animateDijkstra(currentStep));
-      } else {
-        this.setState({ isPaused: true }, () => {
-          for (let i = currentStep; i < timeouts.length; i++) {
-            clearTimeout(timeouts[i]);
-          }
-        });
+  handleAlgorithmChange = (event) => {
+    const selectedAlgorithm = event.target.value;
+    this.setState({ selectedAlgorithm });
+  };
+  
+  handleVisualizeClick = () => {
+    const { selectedAlgorithm } = this.state;
+    if (!selectedAlgorithm) {
+      alert('Please select an algorithm first!');
+    } else {
+      if (selectedAlgorithm === 'Dijkstra') {
+        this.VisualizeDijkstra();
+      } else if (selectedAlgorithm === 'A* Search Algorithm') {
+        this.VisualizeAStarSearch();
       }
     }
-  }
+  };
   
-  clearTimeouts() {
+  clearTimeouts = () => {
     const { timeouts } = this.state;
-    for (let i = 0; i< timeouts.length; i++){
-      this.clearTimeouts(timeouts[i]);
+    for (let i = 0; i < timeouts.length; i++) {
+      clearTimeout(timeouts[i]);
     }
     this.setState({ timeouts: [] });
-  }
-
+  };
+  
   clearAll() {
     this.clearTimeouts();
     const newGrid = setUpInitialGrid();
@@ -92,15 +116,34 @@ export default class PathfindingVisualizer extends Component {
     this.setState({ grid: newGrid, disableDropDown: false, isVisualized: false });
   }
 
+  clearPath() {
+    const { grid } = this.state;
+    for (let row = 0; row < grid.length; row++){
+      for (let col = 0; col < grid[row].length; col++){
+        const node = grid[row][col];
+        const nodeElement = document.getElementById(`node-${node.row}-${node.col}`);
+        if (node.isVisited && !node.isStart && !node.isFinish) {
+          nodeElement.className = 'node';
+          node.isVisited = false;
+        }
+      }
+    }
+  }
+
   animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
-    const { animationSpeed } = this.state;
-    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+    const { animationSpeed, currentStep } = this.state;
+    const timeouts = [];
+    for (let i = currentStep; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
-        setTimeout(() => {
-          this.animateShortestPath(nodesInShortestPathOrder);
-        }, animationSpeed * i);
+        timeouts.push(
+          setTimeout(() => {
+            this.animateShortestPath(nodesInShortestPathOrder);
+          }, animationSpeed * i)
+        );
+        this.setState({ timeouts });
         return;
       }
+      timeouts.push(
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
         const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
@@ -110,8 +153,10 @@ export default class PathfindingVisualizer extends Component {
         setTimeout(() => {
           this.setState({ isVisualized: false, disableDropDown: false });
         }, animationSpeed * i);
-      }, animationSpeed * i);
+      }, animationSpeed * i)
+      );
     }
+    this.setState( {timeouts} );
   }
 
   // Animate A* Search
@@ -162,7 +207,7 @@ export default class PathfindingVisualizer extends Component {
   }
 
   handleMouseUp() {
-    this.setState({mouseIsPressed: false});
+    this.setState({mouseIsPressed: false, movingStartNode: false, movingTargetNode: false});
   }
 
   VisualizeDijkstra(){
@@ -189,32 +234,55 @@ export default class PathfindingVisualizer extends Component {
   render(){
     
     const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
-    console.log({ isVisualized, disableDropDown });
+    const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm'];
+    const { isAlgorithmSelected } = this.state;
     
     return(
         <>
-          <select 
-              value={this.state.animationSpeed} 
-              onChange={this.handleAnimationSpeedChange}
-              disabled={disableDropDown || isVisualized}>
+            <div className="select-container">
+              <select
+                value={this.state.animationSpeed}
+                onChange={this.handleAnimationSpeedChange}
+                disabled={disableDropDown || isVisualized}
+                className="custom-select"
+              >
                 <option value="10">Fastest</option>
                 <option value="20">Fast</option>
                 <option value="50">Normal</option>
                 <option value="70">Slow</option>
                 <option value="100">Slowest</option>
-            </select>
-            <button onClick={() => this.VisualizeDijkstra()} disabled={disableDropDown || isVisualized}>
-                Visualize Dijkstra'S Algorithm
+              </select>
+            </div>
+            <div className="select-container">
+              <select
+                value={this.state.selectedAlgorithm}
+                onChange={this.handleAlgorithmChange}
+                disabled={disableDropDown || isVisualized}
+              >
+                {algorithms.map((algorithm, index) => (
+                  <option key={index} value={algorithm}>
+                    {algorithm}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
+              Visualize
             </button>
-            <button onClick={() => this.VisualizeAStarSearch()} disabled={disableDropDown || isVisualized}>
-                Visualize A* Algorithm
-            </button>
-            <button onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
+            {isAlgorithmSelected === false && (
+              <div className="alert">
+                Please select an algorithm first!
+              </div>
+            )}
+            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
                 Clear All
             </button>
-            <button onClick={this.handlePauseContinue} disabled={!isVisualized} className="pause-continue-btn">
-                {isPaused ? 'Continue' : 'Pause'}
+            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
+                Clear Path
             </button>
+            {/* <button onClick={this.handlePauseContinue} className="pause-continue-btn">
+                {isPaused ? 'Continue' : 'Pause'}
+            </button> */}
             <div className='grid'>
                 {grid.map((row, rowIdx) => {
                     return (
@@ -282,3 +350,26 @@ const getNewGridWithWallToggled = (grid, row, col) => {
   newGrid[row][col] = newNode;
   return newGrid;
 };
+
+const getNewGridWithNewStart = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  const newNode = {
+    ...node,
+    isStart: true,
+  };
+  newGrid[row][col] = newNode;
+  return newGrid;
+}
+
+const getNewGridWithNewTarget = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  const newNode = {
+    ...node,
+    isFinish: true,
+  };
+  newGrid[row][col] = newNode;
+  return newGrid;
+
+}
