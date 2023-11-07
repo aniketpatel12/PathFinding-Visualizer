@@ -4,6 +4,7 @@ import { aStarSearch, getNodesInShortestPathOrder  } from '../Algorithms/astarse
 import { dijkstra } from '../Algorithms/dijkstra';
 
 import './PathfindingVisualizer.css';
+import  './Node/Node.css'
 
 let START_NODE_ROW = 5;
 let START_NODE_COL = 10;
@@ -265,6 +266,10 @@ export default class PathfindingVisualizer extends Component {
     
     return(
         <>
+         {/* <div className="pathfinding-visualizer"> */}
+         <div className="header">
+          Pathfinding Visualizer
+        </div>
         <div className='control-plane'>
             <div className="select-container">
               <select

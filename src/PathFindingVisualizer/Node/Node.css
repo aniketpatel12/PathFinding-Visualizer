@@ -1,3 +1,21 @@
+.header {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 600;
+  color: #4caf50; /* Adjust the color as needed */
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.header::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: #4caf50; /* Adjust the color as needed */
+  margin: 10px auto;
+}
+
 .node {
   width: 20px; /* Adjust the width of each node */
   height: 20px; /* Adjust the height of each node */
@@ -97,10 +115,12 @@
   
   .control-panel {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-}
+  }
+  
 
 .custom-select {
     display: inline-block;
