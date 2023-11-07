@@ -1,28 +1,30 @@
 .node {
-    width: 25px;
-    height: 25px;
-    outline: 1px solid rgb(175, 216, 248);
-    display: inline-block;
+  width: 20px; /* Adjust the width of each node */
+  height: 20px; /* Adjust the height of each node */
+  outline: 1px solid #b4d4f8; /* Change this color to the desired outline color */
+  display: inline-block;
+  margin: 2px; /* Adjust the margin to add spacing between nodes */
 }
 
 .node-finish {
-    background-color: rgb(255, 0, 0);
+  background-color: #ff0000; /* Change this color to the desired finish node color */
 }
 
 .node-start {
-    background-color: green;
+  background-color: #00ff00; /* Change this color to the desired start node color */
 }
 
 .node-visited {
-    animation-name: visitedAnimation;
-    animation-duration: 1.5s;
-    animation-timing-function: ease-out;
-    animation-delay: 0;
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    animation-play-state: running;
+  animation-name: visitedAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
 }
+
 
 @keyframes visitedAnimation {
     0% {
@@ -98,9 +100,35 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-  }
-  
-  button {
+}
+
+.custom-select {
+    display: inline-block;
+    font-size: 16px;
+    color: #333;
+    padding: 5px 10px;
+    margin: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.custom-select:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+.custom-select:hover {
+    border-color: #4caf50;
+}
+
+.button-container {
+    display: flex;
+    align-items: center;
+}
+
+button {
     margin: 10px;
     padding: 10px 20px;
     font-size: 16px;
@@ -110,22 +138,28 @@
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  button:hover {
+}
+
+button:hover {
     background-color: #388e3c;
-  }
-  
-  .alert {
+}
+
+.disabled-button {
+    background-color: lightgray;
+    color: white;
+    cursor: not-allowed;
+}
+
+.alert {
     background-color: #f44336;
     color: #fff;
     padding: 10px;
     text-align: center;
     margin-bottom: 10px;
     border-radius: 5px;
-  }
-  
-  .closebtn {
+}
+
+.closebtn {
     margin-left: 15px;
     color: white;
     font-weight: bold;
@@ -134,14 +168,36 @@
     line-height: 20px;
     cursor: pointer;
     transition: 0.3s;
-  }
-  
-  .closebtn:hover {
+}
+
+.closebtn:hover {
     color: black;
-  }
+}
+
 
 
   button:disabled {
     background-color: lightgray; /* Change this color to the desired disabled color */
     color: white; /* Change this color to the desired text color when disabled */
+  }
+
+  .custom-select {
+    display: inline-block;
+    font-size: 16px;
+    color: #333; /* Change this color to the desired text color */
+    padding: 5px 10px;
+    margin: 5px;
+    border: 1px solid #ddd; /* Change this color to the desired border color */
+    border-radius: 5px;
+    background-color: #fff; /* Change this color to the desired background color */
+    cursor: pointer;
+  }
+  
+  .custom-select:focus {
+    outline: none;
+    border-color: #4caf50; /* Change this color to the desired focus border color */
+  }
+  
+  .custom-select:hover {
+    border-color: #4caf50; /* Change this color to the desired hover border color */
   }

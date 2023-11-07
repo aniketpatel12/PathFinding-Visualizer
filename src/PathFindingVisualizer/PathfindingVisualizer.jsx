@@ -5,10 +5,10 @@ import { dijkstra } from '../Algorithms/dijkstra';
 
 import './PathfindingVisualizer.css';
 
-const START_NODE_ROW = 5;
-const START_NODE_COL = 10;
-const TARGET_NODE_ROW = 15;
-const TARGET_NODE_COL = 40;
+let START_NODE_ROW = 5;
+let START_NODE_COL = 10;
+let TARGET_NODE_ROW = 15;
+let TARGET_NODE_COL = 40;
 
 export default class PathfindingVisualizer extends Component {
   constructor() {
@@ -38,13 +38,17 @@ export default class PathfindingVisualizer extends Component {
   }
 
   handleMouseDown(row, col) {
-    const { grid } = this.state;
+    const { grid, isVisualized } = this.state;
     const node = grid[row][col];
 
+    if (isVisualized){
+      return;
+    }
+
     if (node.isStart){
-      this.setState({ mouseIsPressed: true, movingStartNode: true });
+      this.setState({ mouseIsPressed: true, movingStartNode: true, previousNode: node });
     }else if(node.isFinish){
-      this.setState({ mouseIsPressed: true, movingTargetNode: true });
+      this.setState({ mouseIsPressed: true, movingTargetNode: true, previousNode: node });
     }else{
       const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
       this.setState({grid: newGrid, mouseIsPressed: true});
@@ -55,14 +59,36 @@ export default class PathfindingVisualizer extends Component {
 
     if(!this.state.mouseIsPressed) return;
 
-    const { grid, movingStartNode, movingTargetNode }= this.state;
+    const { grid, movingStartNode, movingTargetNode, previousNode, isVisualized }= this.state;
+
+    if (isVisualized){
+      return;
+    }
 
     if(movingStartNode){
       const newGrid = getNewGridWithNewStart(grid, row, col);
-      this.setState({ grid: newGrid });
+      if (previousNode) {
+        const resetNode = {
+          ...previousNode,
+          isStart: false,
+        };
+        newGrid[previousNode.row][previousNode.col] = resetNode;
+      }
+      this.setState({ grid:newGrid, previousNode: grid[row][col] });
+      START_NODE_ROW = row;
+      START_NODE_COL = col;
     }else if(movingTargetNode){
       const newGrid = getNewGridWithNewTarget(grid, row, col);
-      this.setState({ grid: newGrid });
+      if (previousNode){
+        const resetNode = {
+          ...previousNode,
+          isFinish: false,
+        };
+        newGrid[previousNode.row][previousNode.col] = resetNode;
+      }
+      this.setState({ grid:newGrid, previousNode: grid[row][col] });
+      TARGET_NODE_ROW = row;
+      TARGET_NODE_COL = col;
     }else{
       const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
       this.setState({grid: newGrid});
@@ -239,6 +265,7 @@ export default class PathfindingVisualizer extends Component {
     
     return(
         <>
+        <div className='control-plane'>
             <div className="select-container">
               <select
                 value={this.state.animationSpeed}
@@ -255,9 +282,10 @@ export default class PathfindingVisualizer extends Component {
             </div>
             <div className="select-container">
               <select
-                value={this.state.selectedAlgorithm}
-                onChange={this.handleAlgorithmChange}
-                disabled={disableDropDown || isVisualized}
+                  value={this.state.selectedAlgorithm}
+                  onChange={this.handleAlgorithmChange}
+                  disabled={disableDropDown || isVisualized}
+                  className="custom-select"
               >
                 {algorithms.map((algorithm, index) => (
                   <option key={index} value={algorithm}>
@@ -266,26 +294,30 @@ export default class PathfindingVisualizer extends Component {
                 ))}
               </select>
             </div>
-            <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
-              Visualize
-            </button>
-            {isAlgorithmSelected === false && (
-              <div className="alert">
-                Please select an algorithm first!
-              </div>
-            )}
-            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
-                Clear All
-            </button>
-            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
-                Clear Path
-            </button>
+            <div className="button-container"></div>
+              <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
+                Visualize
+              </button>
+              {isAlgorithmSelected === false && (
+                <div className="alert">
+                  Please select an algorithm first!
+                </div>
+              )}
+              <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
+                  Clear All
+              </button>
+              <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
+                  Clear Path
+              </button>
+            </div>
+            
             {/* <button onClick={this.handlePauseContinue} className="pause-continue-btn">
                 {isPaused ? 'Continue' : 'Pause'}
             </button> */}
             <div className='grid'>
                 {grid.map((row, rowIdx) => {
                     return (
+                        
                         <div key={rowIdx}>
                             {row.map((node, nodeIdx) => {
                                 const {row, col, isStart, isFinish, isWall} = node;
