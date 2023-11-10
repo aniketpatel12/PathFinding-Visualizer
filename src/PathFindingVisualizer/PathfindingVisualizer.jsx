@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Node from './Node/Node';
 import { aStarSearch, getNodesInShortestPathOrder  } from '../Algorithms/astarsearch';
 import { dijkstra } from '../Algorithms/dijkstra';
-import { depthFirstSearch,  } from '../Algorithms/dfs';
+import { depthFirstSearch } from '../Algorithms/dfs';
 import './PathfindingVisualizer.css';
 import  './Node/Node.css'
 
@@ -21,8 +21,10 @@ export default class PathfindingVisualizer extends Component {
       timeouts: [], // Ensure timeouts is properly initialized as an empty array
       disableDropDown: false,
       isVisualized: false,
-      isPaused: false,
-      currentStep: 0,
+      alertMessage: {
+        message: '',
+        show: false,
+      },
     };
     this.handleAnimationSpeedChange = this.handleAnimationSpeedChange.bind(this);
     // this.handlePauseContinue = this.handlePauseContinue.bin  d(this);
@@ -103,8 +105,8 @@ export default class PathfindingVisualizer extends Component {
   
   handleVisualizeClick = () => {
     const { selectedAlgorithm } = this.state;
-    if (!selectedAlgorithm) {
-      alert('Please select an algorithm first!');
+    if (!selectedAlgorithm || selectedAlgorithm === 'Select an algorithm') {
+      this.showAlert('Please select an algorithm first!');
     } else {
       if (selectedAlgorithm === 'Dijkstra') {
         this.VisualizeDijkstra();
@@ -116,6 +118,23 @@ export default class PathfindingVisualizer extends Component {
 
     }
   };
+
+  showAlert = (message) => {
+    const alertMessage = {
+      message,
+      show: true,
+    };
+    this.setState({ alertMessage });
+  };
+  
+  closeAlert = () => {
+    const alertMessage = {
+      message: '',
+      show: false,
+    };
+    this.setState({ alertMessage });
+  };
+  
   
   clearTimeouts = () => {
     const { timeouts } = this.state;
@@ -324,7 +343,7 @@ export default class PathfindingVisualizer extends Component {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
-    const visitedNodesInOrder = dfsSearch(grid, startNode, targetNode); // Call the DFS algorithm
+    const visitedNodesInOrder = depthFirstSearch(grid, startNode, targetNode); // Call the DFS algorithm
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
     this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -335,7 +354,7 @@ export default class PathfindingVisualizer extends Component {
 render() {
   // ... (existing code)
 
-  const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
+  const {grid, mouseIsPressed, disableDropDown, isVisualized, alertMessage} = this.state;
   const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm', 'DFS'];
   const { isAlgorithmSelected } = this.state;
   return (
@@ -389,6 +408,12 @@ render() {
           </button>
         </div>
       </div>
+      {alertMessage.show && (
+            <div className="alert">
+              <span>{alertMessage.message}</span>
+              <span className="closebtn" onClick={this.closeAlert}>&times;</span>
+            </div>
+      )}
       <div className='grid'>
              {grid.map((row, rowIdx) => {
                     return (

@@ -1,5 +1,5 @@
 // Perform Depth-First Search Algorithm
-export function dfsSearch(grid, startNode, targetNode) {
+export function depthFirstSearch(grid, startNode, targetNode) {
   const visitedNodesInOrder = [];
   const stack = [];
   stack.push(startNode);
