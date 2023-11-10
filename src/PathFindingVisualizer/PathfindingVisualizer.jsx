@@ -2,14 +2,14 @@ import React, {Component} from 'react';
 import Node from './Node/Node';
 import { aStarSearch, getNodesInShortestPathOrder  } from '../Algorithms/astarsearch';
 import { dijkstra } from '../Algorithms/dijkstra';
-
+import { depthFirstSearch,  } from '../Algorithms/dfs';
 import './PathfindingVisualizer.css';
 import  './Node/Node.css'
 
 let START_NODE_ROW = 5;
 let START_NODE_COL = 10;
-let TARGET_NODE_ROW = 15;
-let TARGET_NODE_COL = 40;
+let TARGET_NODE_ROW = 10;
+let TARGET_NODE_COL = 30;
 
 export default class PathfindingVisualizer extends Component {
   constructor() {
@@ -110,7 +110,10 @@ export default class PathfindingVisualizer extends Component {
         this.VisualizeDijkstra();
       } else if (selectedAlgorithm === 'A* Search Algorithm') {
         this.VisualizeAStarSearch();
+      } else if (selectedAlgorithm === 'DFS') {
+        this.VisualizeDFS();
       }
+
     }
   };
   
@@ -207,6 +210,32 @@ export default class PathfindingVisualizer extends Component {
     }, animationSpeed * visitedNodesInOrder.length);
   }
 
+  animateDFS(visitedNodesInOrder, nodesInShortestPathOrder) {
+    const { animationSpeed } = this.state;
+    let timeoutCounter = 0;
+  
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
+        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
+          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+        }
+  
+        timeoutCounter++;
+        if (timeoutCounter === visitedNodesInOrder.length) {
+          setTimeout(() => {
+            this.animateShortestPathDFS(nodesInShortestPathOrder);
+            setTimeout(() => {
+              this.setState({ isVisualized: false, disableDropDown: false });
+            }, animationSpeed * nodesInShortestPathOrder.length);
+          }, animationSpeed * visitedNodesInOrder.length);
+        }
+      }, animationSpeed * i);
+    }
+  }
+  
+
   animateShortestPathAStar(nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
@@ -219,7 +248,40 @@ export default class PathfindingVisualizer extends Component {
         }, animationSpeed * i);
     }
   }
+
+  animateDFS(visitedNodesInOrder, nodesInShortestPathOrder) {
+    const { animationSpeed } = this.state;
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
+        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
+          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+        }
+      }, animationSpeed * i);
+    }
+
+    setTimeout(() => {
+      this.animateShortestPath(nodesInShortestPathOrder);
+      setTimeout(() => {
+        this.setState({ isVisualized: false, disableDropDown: false });
+      }, animationSpeed * nodesInShortestPathOrder.length);
+    }, animationSpeed * visitedNodesInOrder.length);
+  }
   
+  // animateShortestPathDFS(nodesInShortestPathOrder) {
+  //   const { animationSpeed } = this.state;
+  //   for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+  //     setTimeout(() => {
+  //       const node = nodesInShortestPathOrder[i];
+  //       const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
+  //       if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
+  //         document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
+  //       }
+  //     }, animationSpeed * i);
+  //   }
+  // }
+
   animateShortestPath(nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
@@ -258,69 +320,77 @@ export default class PathfindingVisualizer extends Component {
     this.animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
-  render(){
-    
-    const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
-    const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm'];
-    const { isAlgorithmSelected } = this.state;
-    
-    return(
-        <>
-         {/* <div className="pathfinding-visualizer"> */}
-         <div className="header">
-          Pathfinding Visualizer
+  VisualizeDFS() {
+    const { grid } = this.state;
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
+    const visitedNodesInOrder = dfsSearch(grid, startNode, targetNode); // Call the DFS algorithm
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
+    this.setState({ isVisualized: true });
+    this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  // ... (previous code)
+
+render() {
+  // ... (existing code)
+
+  const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
+  const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm', 'DFS'];
+  const { isAlgorithmSelected } = this.state;
+  return (
+    <>
+      <div className="header">
+        Pathfinding Visualizer
+      </div>
+      <div className='control-panel'>
+        <div className="select-container">
+          <select
+            value={this.state.animationSpeed}
+            onChange={this.handleAnimationSpeedChange}
+            disabled={disableDropDown || isVisualized}
+            className="custom-select"
+          >
+            <option value="10">Fastest</option>
+            <option value="20">Fast</option>
+            <option value="50">Normal</option>
+            <option value="70">Slow</option>
+            <option value="100">Slowest</option>
+          </select>
         </div>
-        <div className='control-plane'>
-            <div className="select-container">
-              <select
-                value={this.state.animationSpeed}
-                onChange={this.handleAnimationSpeedChange}
-                disabled={disableDropDown || isVisualized}
-                className="custom-select"
-              >
-                <option value="10">Fastest</option>
-                <option value="20">Fast</option>
-                <option value="50">Normal</option>
-                <option value="70">Slow</option>
-                <option value="100">Slowest</option>
-              </select>
+        <div className="select-container">
+          <select
+            value={this.state.selectedAlgorithm}
+            onChange={this.handleAlgorithmChange}
+            disabled={disableDropDown || isVisualized}
+            className="custom-select"
+          >
+            {algorithms.map((algorithm, index) => (
+              <option key={index} value={algorithm}>
+                {algorithm}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="button-container">
+          <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
+            Visualize
+          </button>
+          {isAlgorithmSelected === false && (
+            <div className="alert">
+              Please select an algorithm first!
             </div>
-            <div className="select-container">
-              <select
-                  value={this.state.selectedAlgorithm}
-                  onChange={this.handleAlgorithmChange}
-                  disabled={disableDropDown || isVisualized}
-                  className="custom-select"
-              >
-                {algorithms.map((algorithm, index) => (
-                  <option key={index} value={algorithm}>
-                    {algorithm}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="button-container"></div>
-              <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
-                Visualize
-              </button>
-              {isAlgorithmSelected === false && (
-                <div className="alert">
-                  Please select an algorithm first!
-                </div>
-              )}
-              <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
-                  Clear All
-              </button>
-              <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
-                  Clear Path
-              </button>
-            </div>
-            
-            {/* <button onClick={this.handlePauseContinue} className="pause-continue-btn">
-                {isPaused ? 'Continue' : 'Pause'}
-            </button> */}
-            <div className='grid'>
-                {grid.map((row, rowIdx) => {
+          )}
+          <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
+            Clear All
+          </button>
+          <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
+            Clear Path
+          </button>
+        </div>
+      </div>
+      <div className='grid'>
+             {grid.map((row, rowIdx) => {
                     return (
                         
                         <div key={rowIdx}>
@@ -345,17 +415,112 @@ export default class PathfindingVisualizer extends Component {
                     );
                 })}
             </div>
-        </>
-    );
-  }
+    </>
+  );
+}
+
+
+  // render(){
+    
+  //   const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
+  //   const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm'];
+  //   const { isAlgorithmSelected } = this.state;
+    
+  //   return(
+  //       <>
+  //        {/* <div className="pathfinding-visualizer"> */}
+  //        <div className="header">
+  //         Pathfinding Visualizer
+  //       </div>
+  //       <div className='control-plane'>
+  //           <div className="select-container">
+  //             <select
+  //               value={this.state.animationSpeed}
+  //               onChange={this.handleAnimationSpeedChange}
+  //               disabled={disableDropDown || isVisualized}
+  //               className="custom-select"
+  //             >
+  //               <option value="10">Fastest</option>
+  //               <option value="20">Fast</option>
+  //               <option value="50">Normal</option>
+  //               <option value="70">Slow</option>
+  //               <option value="100">Slowest</option>
+  //             </select>
+  //           </div>
+  //           <div className="select-container">
+  //             <select
+  //                 value={this.state.selectedAlgorithm}
+  //                 onChange={this.handleAlgorithmChange}
+  //                 disabled={disableDropDown || isVisualized}
+  //                 className="custom-select"
+  //             >
+  //               {algorithms.map((algorithm, index) => (
+  //                 <option key={index} value={algorithm}>
+  //                   {algorithm}
+  //                 </option>
+  //               ))}
+  //             </select>
+  //           </div>
+  //           <div className="button-container"></div>
+  //             <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
+  //               Visualize
+  //             </button>
+  //             {isAlgorithmSelected === false && (
+  //               <div className="alert">
+  //                 Please select an algorithm first!
+  //               </div>
+  //             )}
+  //             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
+  //                 Clear All
+  //             </button>
+  //             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
+  //                 Clear Path
+  //             </button>
+  //             {/* <button className="dark-mode-button" onClick={handleDarkModeToggle}>
+  //               Dark Mode
+  //             </button> */}
+  //           </div>
+            
+  //           {/* <button onClick={this.handlePauseContinue} className="pause-continue-btn">
+  //               {isPaused ? 'Continue' : 'Pause'}
+  //           </button> */}
+  //           <div className='grid'>
+  //               {grid.map((row, rowIdx) => {
+  //                   return (
+                        
+  //                       <div key={rowIdx}>
+  //                           {row.map((node, nodeIdx) => {
+  //                               const {row, col, isStart, isFinish, isWall} = node;
+  //                               return (
+  //                                   <Node 
+  //                                       key={nodeIdx} 
+  //                                       col={col}
+  //                                       isFinish={isFinish}
+  //                                       isStart={isStart} 
+  //                                       isWall={isWall}
+  //                                       mouseIsPressed={mouseIsPressed}
+  //                                       onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+  //                                       onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
+  //                                       onMouseUp={() => this.handleMouseUp()}
+  //                                       row={row} 
+  //                                       ></Node>
+  //                                   );
+  //                           })}
+  //                       </div>
+  //                   );
+  //               })}
+  //           </div>
+  //       </>
+  //   );
+  // }
 }
 
 // create the initialGrid setup
 const setUpInitialGrid = () => {
     const grid = [];
-    for (let row =0; row < 20; row++){
+    for (let row =0; row < 15; row++){
         const currentRow = [];
-        for (let col = 0; col < 50; col++){
+        for (let col = 0; col < 35; col++){
             currentRow.push(createNode(col, row));
         }
         grid.push(currentRow);

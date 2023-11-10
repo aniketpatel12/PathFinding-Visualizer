@@ -1,10 +1,12 @@
 .header {
   text-align: center;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 36px;
   font-weight: 600;
   color: #4caf50; /* Adjust the color as needed */
   margin-bottom: 20px;
   text-transform: uppercase;
+  margin-top: 30px;
 }
 
 .header::after {
@@ -17,9 +19,10 @@
 }
 
 .node {
-  width: 20px; /* Adjust the width of each node */
-  height: 20px; /* Adjust the height of each node */
-  outline: 1px solid #b4d4f8; /* Change this color to the desired outline color */
+  width: 30px; /* Adjust the width of each node */
+  height: 30px; /* Adjust the height of each node */
+  outline: 1px solid #000408;
+  /* background-color: #2f2e2e; Change this color to the desired outline color */
   display: inline-block;
   margin: 2px; /* Adjust the margin to add spacing between nodes */
 }
@@ -29,7 +32,7 @@
 }
 
 .node-start {
-  background-color: #00ff00; /* Change this color to the desired start node color */
+  background-color: #4caf50; /* Change this color to the desired start node color */
 }
 
 .node-visited {
@@ -112,14 +115,32 @@
     font-weight: bold;
     margin-bottom: 20px;
   }
+
   
-  .control-panel {
+.control-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.select-container {
+  display: inline-block;
+  margin: 5px;
+}
+
+.button-container {
+  display: inline-block;
+  margin: 5px;
+}
+  
+  /* .control-panel {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-  }
+  } */
   
 
 .custom-select {
@@ -132,7 +153,9 @@
     border-radius: 5px;
     background-color: #fff;
     cursor: pointer;
-}
+    width: 150px; /* Set a fixed width for the drop-down menu and buttons */
+    height: 40px; /* Set a fixed height for the drop-down menu and buttons */
+  }
 
 .custom-select:focus {
     outline: none;
@@ -221,3 +244,22 @@ button:hover {
   .custom-select:hover {
     border-color: #4caf50; /* Change this color to the desired hover border color */
   }
+
+  /* ... previous CSS code ... */
+
+.dark-mode-button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dark-mode-button:hover {
+  background-color: #388e3c;
+}
+
