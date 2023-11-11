@@ -233,15 +233,23 @@ button:hover {
   transition: background-color 0.3s;
 }
 
-.alert {
+#alert-box {
+  display: none;
   position: fixed;
-  top: 0;
-  width: 99%;
-  background-color: #f44336;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
-  border-radius: 0 0 5px 5px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff; /* Set your desired background color */
+  padding: 20px;
+  border: 2px solid #000; /* Set your desired border color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Add a class to blur the background */
+.blurred {
+  filter: blur(3px); /* Adjust the blur intensity as needed */
+  pointer-events: none; /* Allow clicking through the blurred background */
 }
 
 .closebtn {
@@ -257,3 +265,7 @@ button:hover {
   color: black;
 }
 
+.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+}

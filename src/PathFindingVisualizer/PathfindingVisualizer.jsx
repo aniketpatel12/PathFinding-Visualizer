@@ -3,12 +3,13 @@ import Node from './Node/Node';
 import { aStarSearch, getNodesInShortestPathOrder  } from '../Algorithms/astarsearch';
 import { dijkstra } from '../Algorithms/dijkstra';
 import { depthFirstSearch } from '../Algorithms/dfs';
+import { bfs } from '../Algorithms/bfs';
 import './PathfindingVisualizer.css';
 import  './Node/Node.css'
 
-let START_NODE_ROW = 5;
-let START_NODE_COL = 10;
-let TARGET_NODE_ROW = 10;
+let START_NODE_ROW = 7;
+let START_NODE_COL = 4;
+let TARGET_NODE_ROW = 7;
 let TARGET_NODE_COL = 30;
 
 export default class PathfindingVisualizer extends Component {
@@ -33,6 +34,7 @@ export default class PathfindingVisualizer extends Component {
 
   componentDidMount() {
     const grid = setUpInitialGrid();
+    window.closeAlertBox = this.closeAlertBox.bind(this);
     this.setState({grid});
   }
 
@@ -104,37 +106,45 @@ export default class PathfindingVisualizer extends Component {
   };
   
   handleVisualizeClick = () => {
-    const { selectedAlgorithm } = this.state;
+    const { selectedAlgorithm , grid, startNode, targetNode } = this.state;
+  
     if (!selectedAlgorithm || selectedAlgorithm === 'Select an algorithm') {
       this.showAlert('Please select an algorithm first!');
-    } else {
-      if (selectedAlgorithm === 'Dijkstra') {
-        this.VisualizeDijkstra();
-      } else if (selectedAlgorithm === 'A* Search Algorithm') {
-        this.VisualizeAStarSearch();
-      } else if (selectedAlgorithm === 'DFS') {
-        this.VisualizeDFS();
-      }
-
+      return;
     }
+
+    if (selectedAlgorithm === 'Dijkstra') {
+      console.log("Inside Dijkstra Visualizaton");
+      this.VisualizeDijkstra();
+    } else if (selectedAlgorithm === 'A* Search Algorithm') {
+      this.VisualizeAStarSearch();
+    } else if (selectedAlgorithm === 'DFS') {
+      this.VisualizeDFS();
+    } else if (selectedAlgorithm === 'BFS') {
+      this.VisualizeBFS();
+    }
+    
   };
 
-  showAlert = (message) => {
-    const alertMessage = {
-      message,
-      show: true,
-    };
-    this.setState({ alertMessage });
-  };
-  
-  closeAlert = () => {
-    const alertMessage = {
-      message: '',
-      show: false,
-    };
-    this.setState({ alertMessage });
-  };
-  
+  // Inside your PathfindingVisualizer component
+  showAlert(message) {
+    // Add the class to blur the background
+    document.getElementById('root').classList.add('blurred');
+
+    // Show the alert box
+    const alertBox = document.getElementById('alert-box');
+    alertBox.innerHTML = `<div class="alert">${message}<span class="closebtn" onclick="closeAlertBox()">×</span></div>`;
+    alertBox.style.display = 'block';
+  }
+
+  closeAlertBox() {
+    // Remove the class to unblur the background
+    document.getElementById('root').classList.remove('blurred');
+
+    // Hide the alert box
+    const alertBox = document.getElementById('alert-box');
+    alertBox.style.display = 'none';
+  }
   
   clearTimeouts = () => {
     const { timeouts } = this.state;
@@ -180,32 +190,23 @@ export default class PathfindingVisualizer extends Component {
   }
 
   animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
-    const { animationSpeed, currentStep } = this.state;
-    const timeouts = [];
-    for (let i = currentStep; i <= visitedNodesInOrder.length; i++) {
-      if (i === visitedNodesInOrder.length) {
-        timeouts.push(
-          setTimeout(() => {
-            this.animateShortestPath(nodesInShortestPathOrder);
-          }, animationSpeed * i)
-        );
-        this.setState({ timeouts });
-        return;
-      }
-      timeouts.push(
-      setTimeout(() => {
-        const node = visitedNodesInOrder[i];
-        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
-        }
+    const { animationSpeed } = this.state;
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+        setTimeout(() => {
+            const node = visitedNodesInOrder[i];
+            const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
+            if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+            }
+        }, animationSpeed * i);
+    }
+
+    setTimeout(() => {
+        this.animateShortestPath(nodesInShortestPathOrder);
         setTimeout(() => {
           this.setState({ isVisualized: false, disableDropDown: false });
-        }, animationSpeed * i);
-      }, animationSpeed * i)
-      );
-    }
-    this.setState( {timeouts} );
+      }, animationSpeed * visitedNodesInOrder.length);
+    }, animationSpeed * visitedNodesInOrder.length);
   }
 
   // Animate A* Search
@@ -229,30 +230,30 @@ export default class PathfindingVisualizer extends Component {
     }, animationSpeed * visitedNodesInOrder.length);
   }
 
-  animateDFS(visitedNodesInOrder, nodesInShortestPathOrder) {
-    const { animationSpeed } = this.state;
-    let timeoutCounter = 0;
+  // animateDFS(visitedNodesInOrder, nodesInShortestPathOrder) {
+  //   const { animationSpeed } = this.state;
+  //   let timeoutCounter = 0;
   
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodesInOrder[i];
-        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
-        }
+  //   for (let i = 0; i < visitedNodesInOrder.length; i++) {
+  //     setTimeout(() => {
+  //       const node = visitedNodesInOrder[i];
+  //       const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
+  //       if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
+  //         document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+  //       }
   
-        timeoutCounter++;
-        if (timeoutCounter === visitedNodesInOrder.length) {
-          setTimeout(() => {
-            this.animateShortestPathDFS(nodesInShortestPathOrder);
-            setTimeout(() => {
-              this.setState({ isVisualized: false, disableDropDown: false });
-            }, animationSpeed * nodesInShortestPathOrder.length);
-          }, animationSpeed * visitedNodesInOrder.length);
-        }
-      }, animationSpeed * i);
-    }
-  }
+  //       timeoutCounter++;
+  //       if (timeoutCounter === visitedNodesInOrder.length) {
+  //         setTimeout(() => {
+  //           this.animateShortestPathDFS(nodesInShortestPathOrder);
+  //           setTimeout(() => {
+  //             this.setState({ isVisualized: false, disableDropDown: false });
+  //           }, animationSpeed * nodesInShortestPathOrder.length);
+  //         }, animationSpeed * visitedNodesInOrder.length);
+  //       }
+  //     }, animationSpeed * i);
+  //   }
+  // }
   
 
   animateShortestPathAStar(nodesInShortestPathOrder) {
@@ -287,6 +288,26 @@ export default class PathfindingVisualizer extends Component {
       }, animationSpeed * nodesInShortestPathOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
+
+  animateBFS(visitedNodesInOrder, nodesInShortestPathOrder){
+    const { animationSpeed } = this.state;
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
+        if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
+          document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+        }
+      }, animationSpeed * i);
+    }
+
+    setTimeout(() => {
+      this.animateShortestPath(nodesInShortestPathOrder);
+      setTimeout(() => {
+        this.setState({ isVisualized: false, disableDropDown: false });
+      }, animationSpeed * visitedNodesInOrder.length);
+    }, animationSpeed * visitedNodesInOrder.length);
+  }
   
   // animateShortestPathDFS(nodesInShortestPathOrder) {
   //   const { animationSpeed } = this.state;
@@ -318,7 +339,15 @@ export default class PathfindingVisualizer extends Component {
     this.setState({mouseIsPressed: false, movingStartNode: false, movingTargetNode: false});
   }
 
+  handleAlertClose() {
+    this.setState({
+      showAlert: false,
+      alertMessage: "",
+    });
+  }
+
   VisualizeDijkstra(){
+    console.log("Visualize Dijkstra");
     const {grid} = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
@@ -333,6 +362,12 @@ export default class PathfindingVisualizer extends Component {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
+
+    if (targetNode.isWall) {
+      this.showAlert('Target node is covered by a wall. Please choose a valid target !!!');
+      return;
+    }
+
     const visitedNodesInOrder = aStarSearch(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
@@ -349,71 +384,130 @@ export default class PathfindingVisualizer extends Component {
     this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
-  // ... (previous code)
+  VisualizeBFS() {
+    const { grid } = this.state;
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
+    const visitedNodesInOrder = bfs(grid, startNode, targetNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
+    this.setState({ isVisualized: true });
+    this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  // Inside your PathfindingVisualizer component
+  closeAlertBox() {
+    // Remove the class to unblur the background
+    document.getElementById('root').classList.remove('blurred');
+
+    // Hide the alert box
+    const alertBox = document.getElementById('alert-box');
+    alertBox.style.display = 'none';
+  }
+
+  showAlert(message) {
+    // Add the class to blur the background
+    document.getElementById('root').classList.add('blurred');
+
+    // Show the alert box
+    const alertBox = document.getElementById('alert-box');
+    alertBox.innerHTML = `<div class="alert">${message}<span class="closebtn" onclick="this.closeAlertBox()">×</span></div>`;
+    alertBox.style.display = 'block';
+  }
+
+resetGrid() {
+  const { grid } = this.state;
+  
+  // Clear visited nodes
+  const newGrid = grid.map(row =>
+    row.map(node => ({
+      ...node,
+      isVisited: false,
+      distance: Infinity,
+      previousNode: null,
+      isShortestPath: false,
+    }))
+  );
+
+  this.setState({
+    grid: newGrid,
+    mouseIsPressed: false,
+  });
+}
 
 render() {
-  // ... (existing code)
 
   const {grid, mouseIsPressed, disableDropDown, isVisualized, alertMessage} = this.state;
-  const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm', 'DFS'];
+  const algorithms = ['Select an algorithm', 'A* Search Algorithm', 'BFS', 'DFS', 'Dijkstra'];
   const { isAlgorithmSelected } = this.state;
   return (
     <>
-      <div className="header">
-        Pathfinding Visualizer
+      <div className={`pathfinding-visualizer ${this.state.showAlert ? 'blurred' : ''}`}>
+        <div className="header">
+          Pathfinding Visualizer
+        </div>
+        <div className='control-panel'>
+          <div className="select-container">
+            <select
+              value={this.state.animationSpeed}
+              onChange={this.handleAnimationSpeedChange}
+              disabled={disableDropDown || isVisualized}
+              className="custom-select"
+            >
+              <option value="10">Fastest</option>
+              <option value="20">Fast</option>
+              <option value="50">Normal</option>
+              <option value="70">Slow</option>
+              <option value="100">Slowest</option>
+            </select>
+          </div>
+          <div className="select-container">
+            <select
+              value={this.state.selectedAlgorithm}
+              onChange={this.handleAlgorithmChange}
+              disabled={disableDropDown || isVisualized}
+              className="custom-select"
+            >
+              {algorithms.map((algorithm, index) => (
+                <option key={index} value={algorithm}>
+                  {algorithm}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="button-container">
+            <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
+              Visualize
+            </button>
+            {isAlgorithmSelected === false && (
+              <div className="alert">
+                Please select an algorithm first!
+              </div>
+            )}
+            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
+              Clear All
+            </button>
+            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
+              Clear Path
+            </button>
+            
+        </div>
       </div>
-      <div className='control-panel'>
-        <div className="select-container">
-          <select
-            value={this.state.animationSpeed}
-            onChange={this.handleAnimationSpeedChange}
-            disabled={disableDropDown || isVisualized}
-            className="custom-select"
-          >
-            <option value="10">Fastest</option>
-            <option value="20">Fast</option>
-            <option value="50">Normal</option>
-            <option value="70">Slow</option>
-            <option value="100">Slowest</option>
-          </select>
-        </div>
-        <div className="select-container">
-          <select
-            value={this.state.selectedAlgorithm}
-            onChange={this.handleAlgorithmChange}
-            disabled={disableDropDown || isVisualized}
-            className="custom-select"
-          >
-            {algorithms.map((algorithm, index) => (
-              <option key={index} value={algorithm}>
-                {algorithm}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="button-container">
-          <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
-            Visualize
-          </button>
-          {isAlgorithmSelected === false && (
-            <div className="alert">
-              Please select an algorithm first!
-            </div>
-          )}
-          <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
-            Clear All
-          </button>
-          <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
-            Clear Path
-          </button>
-        </div>
-      </div>
+      <div id="alert-box"></div>
       {alertMessage.show && (
             <div className="alert">
               <span>{alertMessage.message}</span>
               <span className="closebtn" onClick={this.closeAlert}>&times;</span>
             </div>
       )}
+      {this.state.showAlert && (
+        <div className="alert">
+          <span className="closebtn" onClick={() => this.handleAlertClose()}>
+            &times;
+          </span>
+          {this.state.alertMessage}
+        </div>
+      )}
+      </div>
       <div className='grid'>
              {grid.map((row, rowIdx) => {
                     return (

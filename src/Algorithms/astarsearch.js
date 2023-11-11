@@ -40,9 +40,16 @@ function updateUnvisitedNeighbors(node, grid, targetNode) {
 }
 
 // Sort nodes by distance and heuristic value
+// Sort nodes by distance and heuristic value
 function sortNodesByDistanceAndHeuristic(unVisitedNodes) {
-    unVisitedNodes.sort((nodeA, nodeB) => nodeA.distance + nodeA.heuristic - (nodeB.distance + nodeB.heuristic));
+    unVisitedNodes.sort((nodeA, nodeB) => {
+        const costA = nodeA.distance + nodeA.heuristic;
+        const costB = nodeB.distance + nodeB.heuristic;
+
+        return costA - costB;
+    });
 }
+
 
 // Get unvisited neighbors for A* Search
 function getUnvisitedNeighbors(node, grid) {
