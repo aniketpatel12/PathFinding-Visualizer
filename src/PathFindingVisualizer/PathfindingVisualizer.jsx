@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import Node from './Node/Node';
 import { aStarSearch, getNodesInShortestPathOrder  } from '../Algorithms/astarsearch';
 import { dijkstra } from '../Algorithms/dijkstra';
@@ -22,6 +24,7 @@ export default class PathfindingVisualizer extends Component {
       timeouts: [], // Ensure timeouts is properly initialized as an empty array
       disableDropDown: false,
       isVisualized: false,
+      isAlertVisible: false,
       alertMessage: {
         message: '',
         show: false,
@@ -34,7 +37,6 @@ export default class PathfindingVisualizer extends Component {
 
   componentDidMount() {
     const grid = setUpInitialGrid();
-    window.closeAlertBox = this.closeAlertBox.bind(this);
     this.setState({grid});
   }
 
@@ -126,26 +128,16 @@ export default class PathfindingVisualizer extends Component {
     
   };
 
-  // Inside your PathfindingVisualizer component
   showAlert(message) {
-    // Add the class to blur the background
-    document.getElementById('root').classList.add('blurred');
+    Swal.fire({
+      title: 'Alert',
+      text: message,
+      icon: 'warning',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK'
+    });
+  } 
 
-    // Show the alert box
-    const alertBox = document.getElementById('alert-box');
-    alertBox.innerHTML = `<div class="alert">${message}<span class="closebtn" onclick="closeAlertBox()">×</span></div>`;
-    alertBox.style.display = 'block';
-  }
-
-  closeAlertBox() {
-    // Remove the class to unblur the background
-    document.getElementById('root').classList.remove('blurred');
-
-    // Hide the alert box
-    const alertBox = document.getElementById('alert-box');
-    alertBox.style.display = 'none';
-  }
-  
   clearTimeouts = () => {
     const { timeouts } = this.state;
     for (let i = 0; i < timeouts.length; i++) {
@@ -254,7 +246,6 @@ export default class PathfindingVisualizer extends Component {
   //     }, animationSpeed * i);
   //   }
   // }
-  
 
   animateShortestPathAStar(nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
@@ -309,19 +300,6 @@ export default class PathfindingVisualizer extends Component {
     }, animationSpeed * visitedNodesInOrder.length);
   }
   
-  // animateShortestPathDFS(nodesInShortestPathOrder) {
-  //   const { animationSpeed } = this.state;
-  //   for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-  //     setTimeout(() => {
-  //       const node = nodesInShortestPathOrder[i];
-  //       const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-  //       if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-  //         document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
-  //       }
-  //     }, animationSpeed * i);
-  //   }
-  // }
-
   animateShortestPath(nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
@@ -337,13 +315,6 @@ export default class PathfindingVisualizer extends Component {
 
   handleMouseUp() {
     this.setState({mouseIsPressed: false, movingStartNode: false, movingTargetNode: false});
-  }
-
-  handleAlertClose() {
-    this.setState({
-      showAlert: false,
-      alertMessage: "",
-    });
   }
 
   VisualizeDijkstra(){
@@ -394,26 +365,6 @@ export default class PathfindingVisualizer extends Component {
     this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
-  // Inside your PathfindingVisualizer component
-  closeAlertBox() {
-    // Remove the class to unblur the background
-    document.getElementById('root').classList.remove('blurred');
-
-    // Hide the alert box
-    const alertBox = document.getElementById('alert-box');
-    alertBox.style.display = 'none';
-  }
-
-  showAlert(message) {
-    // Add the class to blur the background
-    document.getElementById('root').classList.add('blurred');
-
-    // Show the alert box
-    const alertBox = document.getElementById('alert-box');
-    alertBox.innerHTML = `<div class="alert">${message}<span class="closebtn" onclick="this.closeAlertBox()">×</span></div>`;
-    alertBox.style.display = 'block';
-  }
-
 resetGrid() {
   const { grid } = this.state;
   
@@ -436,12 +387,11 @@ resetGrid() {
 
 render() {
 
-  const {grid, mouseIsPressed, disableDropDown, isVisualized, alertMessage} = this.state;
+  const {grid, mouseIsPressed, disableDropDown, isVisualized} = this.state;
   const algorithms = ['Select an algorithm', 'A* Search Algorithm', 'BFS', 'DFS', 'Dijkstra'];
   const { isAlgorithmSelected } = this.state;
   return (
     <>
-      <div className={`pathfinding-visualizer ${this.state.showAlert ? 'blurred' : ''}`}>
         <div className="header">
           Pathfinding Visualizer
         </div>
@@ -489,25 +439,8 @@ render() {
             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
               Clear Path
             </button>
-            
+          </div>
         </div>
-      </div>
-      <div id="alert-box"></div>
-      {alertMessage.show && (
-            <div className="alert">
-              <span>{alertMessage.message}</span>
-              <span className="closebtn" onClick={this.closeAlert}>&times;</span>
-            </div>
-      )}
-      {this.state.showAlert && (
-        <div className="alert">
-          <span className="closebtn" onClick={() => this.handleAlertClose()}>
-            &times;
-          </span>
-          {this.state.alertMessage}
-        </div>
-      )}
-      </div>
       <div className='grid'>
              {grid.map((row, rowIdx) => {
                     return (
@@ -633,6 +566,19 @@ render() {
   //   );
   // }
 }
+
+  // Function to show the alert box and blur the background
+  function showAlert() {
+    document.body.classList.add('blurred');
+    document.getElementById('alert-box').style.display = 'block';
+  }
+  
+  // Function to close the alert box and remove the blur
+  function closeAlertBox() {
+    document.body.classList.remove('blurred');
+    document.getElementById('alert-box').style.display = 'none';
+  }
+  
 
 // create the initialGrid setup
 const setUpInitialGrid = () => {

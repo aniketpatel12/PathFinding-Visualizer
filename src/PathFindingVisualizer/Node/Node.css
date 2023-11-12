@@ -21,10 +21,10 @@
 .node {
   width: 30px; /* Adjust the width of each node */
   height: 30px; /* Adjust the height of each node */
-  outline: 1px solid #000408;
-  /* background-color: #2f2e2e; Change this color to the desired outline color */
+  outline: 1px solid #000000;
   display: inline-block;
   margin: 2px; /* Adjust the margin to add spacing between nodes */
+  border-radius: 20%;
 }
 
 .node-finish {
@@ -219,53 +219,25 @@ button:hover {
     border-color: #4caf50; /* Change this color to the desired hover border color */
   }
 
-  /* ... previous CSS code ... */
-
-.dark-mode-button {
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s;
+body {
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
 }
 
-#alert-box {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff; /* Set your desired background color */
-  padding: 20px;
-  border: 2px solid #000; /* Set your desired border color */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Ensure it appears above other elements */
-}
+/* Footer.css */
 
-/* Add a class to blur the background */
-.blurred {
-  filter: blur(3px); /* Adjust the blur intensity as needed */
-  pointer-events: none; /* Allow clicking through the blurred background */
-}
-
-.closebtn {
+.footer {
+  background-color: #333;
   color: white;
-  font-weight: bold;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  float: right;
+  padding: 10px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.closebtn:hover {
-  color: black;
+.footer a {
+  color: white;
+  text-decoration: none;
 }
 
-.blurred {
-  filter: blur(5px);
-  pointer-events: none;
+.footer a:hover {
+  text-decoration: underline;
 }

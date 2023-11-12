@@ -9,6 +9,7 @@ export function bfs(grid, startNode, targetNode){
 
     while(queue.length > 0){
         const currentNode = queue.shift();
+        if (currentNode.isWall) continue;
         if (currentNode === targetNode){
             return visitedNodesInOrder;
         }
@@ -19,11 +20,12 @@ export function bfs(grid, startNode, targetNode){
         visitedNodesInOrder.push(currentNode);
 
         const neighbors = getUnvisitedNeighbors(currentNode, grid);
+
         for (const neighbor of neighbors){
             const weight = neighbor.isWall ? 1 : 0;
             const distance = currentNode.distance + weight;
-            
-            if(distance < neighbor.distance){
+
+            if (!neighbor.isVisited || distance < neighbor.distance){
                 neighbor.distance = distance;
                 neighbor.previousNode = currentNode;
                 queue.push(neighbor);
