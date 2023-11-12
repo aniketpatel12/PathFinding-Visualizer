@@ -8,6 +8,7 @@ import { depthFirstSearch } from '../Algorithms/dfs';
 import { bfs } from '../Algorithms/bfs';
 import './PathfindingVisualizer.css';
 import  './Node/Node.css'
+import githubLogo from './Node/github-mark.png'
 
 let START_NODE_ROW = 7;
 let START_NODE_COL = 4;
@@ -466,6 +467,13 @@ render() {
                         </div>
                     );
                 })}
+            </div>
+
+            <div className="footer">
+              <span> MADE BY ANIKET PATEL</span>
+              <a href="https://github.com/aniketpatel12/PathFinding-Visualizer" target="_blank" rel="noopener noreferrer">
+                <img src={githubLogo} alt="GitHub Logo" className="github-logo" />
+              </a>
             </div>
     </>
   );

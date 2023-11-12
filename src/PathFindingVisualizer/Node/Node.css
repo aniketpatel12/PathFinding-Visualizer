@@ -223,21 +223,17 @@ body {
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
 }
 
-/* Footer.css */
-
 .footer {
-  background-color: #333;
-  color: white;
-  padding: 10px;
-  text-align: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px; /* Adjust as needed */
+  font-family: 'Your preferred font', sans-serif; /* Add your preferred font or remove this line */
 }
 
-.footer a {
-  color: white;
-  text-decoration: none;
+.github-logo {
+  width: 24px; /* Adjust as needed */
+  height: 24px; /* Adjust as needed */
+  margin-left: 5px; /* Adjust as needed */
 }
 
-.footer a:hover {
-  text-decoration: underline;
-}
