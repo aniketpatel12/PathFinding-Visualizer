@@ -1,19 +1,33 @@
 .header {
   text-align: center;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-size: 36px;
-  font-weight: 600;
-  color: #4caf50; /* Adjust the color as needed */
+  font-size: 40px;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  font-weight: lighter;
+  color: #201f1f;
   margin-bottom: 20px;
   text-transform: uppercase;
-  margin-top: 30px;
+  margin-top: 10px;
 }
+
+.first-letter {
+  font-size: 150%;
+  font-weight: lighter;
+  color: #4caf50;
+}
+
+.last-letter {
+  font-size: 150%;
+  font-weight: lighter;
+  color: #4caf50;
+}
+
+
 
 .header::after {
   content: '';
   display: block;
-  width: 50px;
-  height: 3px;
+  width: 500px;
+  height: 2px;
   background-color: #4caf50; /* Adjust the color as needed */
   margin: 10px auto;
 }
@@ -23,7 +37,7 @@
   height: 30px; /* Adjust the height of each node */
   outline: 1px solid #000000;
   display: inline-block;
-  margin: 2px; /* Adjust the margin to add spacing between nodes */
+  margin: 3px; /* Adjust the margin to add spacing between nodes */
   border-radius: 20%;
 }
 
@@ -100,22 +114,6 @@
         background-color: rgb(255, 254, 106);
     }
 }
-
-  .pathfinding-visualizer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
   
 .control-panel {
   display: flex;
@@ -146,6 +144,8 @@
 .custom-select {
     display: inline-block;
     font-size: 16px;
+    text-transform: uppercase;
+    font-weight: lighter;
     color: #333;
     padding: 5px 10px;
     margin: 5px;
@@ -153,7 +153,7 @@
     border-radius: 5px;
     background-color: #fff;
     cursor: pointer;
-    width: 150px; /* Set a fixed width for the drop-down menu and buttons */
+    width: 250px; /* Set a fixed width for the drop-down menu and buttons */
     height: 40px; /* Set a fixed height for the drop-down menu and buttons */
   }
 
@@ -175,6 +175,7 @@ button {
     margin: 10px;
     padding: 10px 20px;
     font-size: 16px;
+    text-transform: uppercase;
     border: none;
     border-radius: 5px;
     background-color: #4caf50;
@@ -201,10 +202,10 @@ button:hover {
   .custom-select {
     display: inline-block;
     font-size: 16px;
-    color: #333; /* Change this color to the desired text color */
+    color: #171717; /* Change this color to the desired text color */
     padding: 5px 10px;
     margin: 5px;
-    border: 1px solid #ddd; /* Change this color to the desired border color */
+    border: 1px solid #4caf50; /* Change this color to the desired border color */
     border-radius: 5px;
     background-color: #fff; /* Change this color to the desired background color */
     cursor: pointer;
@@ -227,13 +228,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px; /* Adjust as needed */
-  font-family: 'Your preferred font', sans-serif; /* Add your preferred font or remove this line */
+  font-weight: light;
+  font-size: large;
+  margin-top: 15px; /* Adjust as needed */
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
 }
 
 .github-logo {
   width: 24px; /* Adjust as needed */
   height: 24px; /* Adjust as needed */
-  margin-left: 5px; /* Adjust as needed */
+  margin-left: 10px; /* Adjust as needed */
 }
 

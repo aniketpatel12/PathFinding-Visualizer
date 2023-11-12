@@ -391,10 +391,14 @@ render() {
   const {grid, mouseIsPressed, disableDropDown, isVisualized} = this.state;
   const algorithms = ['Select an algorithm', 'A* Search Algorithm', 'BFS', 'DFS', 'Dijkstra'];
   const { isAlgorithmSelected } = this.state;
+  const title = "PATHFINDING  VISUALIZER";
+  const lastLetter = title.charAt(title.length - 1);
   return (
     <>
         <div className="header">
-          Pathfinding Visualizer
+          <span className="first-letter">{title[0]}</span>
+          {title.substring(1, title.length - 1)}
+          <span className="last-letter">{lastLetter}</span>
         </div>
         <div className='control-panel'>
           <div className="select-container">
@@ -470,109 +474,14 @@ render() {
             </div>
 
             <div className="footer">
-              <span> MADE BY ANIKET PATEL</span>
+              <span> MADE BY ANIKET PATEL  </span>
               <a href="https://github.com/aniketpatel12/PathFinding-Visualizer" target="_blank" rel="noopener noreferrer">
                 <img src={githubLogo} alt="GitHub Logo" className="github-logo" />
               </a>
             </div>
-    </>
-  );
-}
-
-
-  // render(){
-    
-  //   const {grid, mouseIsPressed, disableDropDown, isVisualized, isPaused} = this.state;
-  //   const algorithms = ['Select an algorithm', 'Dijkstra', 'A* Search Algorithm'];
-  //   const { isAlgorithmSelected } = this.state;
-    
-  //   return(
-  //       <>
-  //        {/* <div className="pathfinding-visualizer"> */}
-  //        <div className="header">
-  //         Pathfinding Visualizer
-  //       </div>
-  //       <div className='control-plane'>
-  //           <div className="select-container">
-  //             <select
-  //               value={this.state.animationSpeed}
-  //               onChange={this.handleAnimationSpeedChange}
-  //               disabled={disableDropDown || isVisualized}
-  //               className="custom-select"
-  //             >
-  //               <option value="10">Fastest</option>
-  //               <option value="20">Fast</option>
-  //               <option value="50">Normal</option>
-  //               <option value="70">Slow</option>
-  //               <option value="100">Slowest</option>
-  //             </select>
-  //           </div>
-  //           <div className="select-container">
-  //             <select
-  //                 value={this.state.selectedAlgorithm}
-  //                 onChange={this.handleAlgorithmChange}
-  //                 disabled={disableDropDown || isVisualized}
-  //                 className="custom-select"
-  //             >
-  //               {algorithms.map((algorithm, index) => (
-  //                 <option key={index} value={algorithm}>
-  //                   {algorithm}
-  //                 </option>
-  //               ))}
-  //             </select>
-  //           </div>
-  //           <div className="button-container"></div>
-  //             <button onClick={this.handleVisualizeClick} disabled={disableDropDown || isVisualized}>
-  //               Visualize
-  //             </button>
-  //             {isAlgorithmSelected === false && (
-  //               <div className="alert">
-  //                 Please select an algorithm first!
-  //               </div>
-  //             )}
-  //             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
-  //                 Clear All
-  //             </button>
-  //             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
-  //                 Clear Path
-  //             </button>
-  //             {/* <button className="dark-mode-button" onClick={handleDarkModeToggle}>
-  //               Dark Mode
-  //             </button> */}
-  //           </div>
-            
-  //           {/* <button onClick={this.handlePauseContinue} className="pause-continue-btn">
-  //               {isPaused ? 'Continue' : 'Pause'}
-  //           </button> */}
-  //           <div className='grid'>
-  //               {grid.map((row, rowIdx) => {
-  //                   return (
-                        
-  //                       <div key={rowIdx}>
-  //                           {row.map((node, nodeIdx) => {
-  //                               const {row, col, isStart, isFinish, isWall} = node;
-  //                               return (
-  //                                   <Node 
-  //                                       key={nodeIdx} 
-  //                                       col={col}
-  //                                       isFinish={isFinish}
-  //                                       isStart={isStart} 
-  //                                       isWall={isWall}
-  //                                       mouseIsPressed={mouseIsPressed}
-  //                                       onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-  //                                       onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-  //                                       onMouseUp={() => this.handleMouseUp()}
-  //                                       row={row} 
-  //                                       ></Node>
-  //                                   );
-  //                           })}
-  //                       </div>
-  //                   );
-  //               })}
-  //           </div>
-  //       </>
-  //   );
-  // }
+      </>
+    );
+  }
 }
 
   // Function to show the alert box and blur the background
@@ -591,9 +500,9 @@ render() {
 // create the initialGrid setup
 const setUpInitialGrid = () => {
     const grid = [];
-    for (let row =0; row < 15; row++){
+    for (let row =0; row < 13; row++){
         const currentRow = [];
-        for (let col = 0; col < 35; col++){
+        for (let col = 0; col < 34; col++){
             currentRow.push(createNode(col, row));
         }
         grid.push(currentRow);
