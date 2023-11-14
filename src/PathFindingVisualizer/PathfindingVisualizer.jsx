@@ -109,7 +109,32 @@ export default class PathfindingVisualizer extends Component {
   };
   
   handleVisualizeClick = () => {
-    const { selectedAlgorithm , grid, startNode, targetNode } = this.state;
+    const { selectedAlgorithm } = this.state;
+
+    const { grid } = this.state;
+    let startNodeSurrounded = true;
+    let targetNodeSurrounded = true;
+
+    // Check if startNode is surrounded by walls
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[row].length; col++) {
+        if (grid[row][col].isStart) {
+          startNodeSurrounded = this.areNeighboringNodesWalls(row, col, grid);
+        } else if (grid[row][col].isFinish) {
+          targetNodeSurrounded = this.areNeighboringNodesWalls(row, col, grid);
+        }
+      }
+    }
+
+    if (startNodeSurrounded) {
+      this.showAlert('Start node is fully covered by walls!');
+      return;
+    }
+
+    if (targetNodeSurrounded) {
+      this.showAlert('Target node is fully covered by walls!');
+      return;
+    }
   
     if (!selectedAlgorithm || selectedAlgorithm === 'Select an algorithm') {
       this.showAlert('Please select an algorithm first!');
@@ -126,7 +151,57 @@ export default class PathfindingVisualizer extends Component {
     } else if (selectedAlgorithm === 'BFS') {
       this.VisualizeBFS();
     }
-    
+
+    // if (isSafeToVisualize){
+    // } 
+  };
+
+  // checkStartAndTargetNodes = () => {
+  //   const { grid } = this.state;
+
+  //   // Logic to check if start and target nodes are covered with walls
+  //   const isStartNodeCovered = this.isNodeFullyCovered(grid, this.getStartNode());
+  //   const isTargetNodeCovered = this.isNodeFullyCovered(grid, this.getTargetNode());
+
+  //   // Display an alert if the target node is fully covered
+  //   if (isTargetNodeCovered) {
+  //     this.setState({
+  //       isAlertVisible: true,
+  //       alertMessage: "Target node is fully covered with walls. Please adjust the walls.",
+  //     });
+  //   }
+
+  //   // Return true if it's safe to start visualization, false otherwise
+  //   return !isTargetNodeCovered;
+  // };
+
+  isNodeFullyCovered = (grid, node) => {
+    const { row, col } = node;
+
+    // Check if the node is covered with walls
+    return grid[row][col].isWall;
+  };
+
+  areNeighboringNodesWalls = (row, col, grid) => {
+    const neighbors = this.getNeighbors(row, col, grid);
+
+    for (const neighbor of neighbors) {
+      const { row: neighborRow, col: neighborCol } = neighbor;
+      if (!grid[neighborRow][neighborCol].isWall) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  getNeighbors = (row, col, grid) => {
+    const neighbors = [];
+    if (row > 0) neighbors.push({ row: row - 1, col });
+    if (row < grid.length - 1) neighbors.push({ row: row + 1, col });
+    if (col > 0) neighbors.push({ row, col: col - 1 });
+    if (col < grid[0].length - 1) neighbors.push({ row, col: col + 1 });
+    return neighbors;
   };
 
   showAlert(message) {
