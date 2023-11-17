@@ -240,3 +240,10 @@ body {
   margin-left: 10px; /* Adjust as needed */
 }
 
+.format-pre pre {
+  background: #49483e;
+  color: #f7f7f7;
+  padding: 10px;
+  font-size: 14px;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+}

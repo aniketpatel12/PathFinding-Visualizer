@@ -133,7 +133,7 @@ export default class PathfindingVisualizer extends Component {
 
     if (targetNodeSurrounded) {
       this.showAlert('Target node is fully covered by walls!');
-      return;
+      return; 
     }
   
     if (!selectedAlgorithm || selectedAlgorithm === 'Select an algorithm') {
@@ -208,11 +208,32 @@ export default class PathfindingVisualizer extends Component {
     Swal.fire({
       title: 'Alert',
       text: message,
-      icon: 'warning',
+      icon: 'error',
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'OK'
     });
   } 
+
+  showInfo(message){
+    // Swal.fire({
+    //   position: "top-end",
+    //   icon: "success",
+    //   title: "Visualization Completed",
+    //   text: message,
+    //   confirmButtonColor: '#3085d6',
+    //   confirmButtonText: 'OK'
+    // });
+    Swal.fire({
+      html: '<pre>' + message + '</pre>',
+      customClass: {
+        popup: 'format-pre'
+      },
+      icon: 'success',
+      title: "Visualization Completed",
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Ok'
+    });
+  }
 
   clearTimeouts = () => {
     const { timeouts } = this.state;
@@ -257,7 +278,7 @@ export default class PathfindingVisualizer extends Component {
     }
   }
 
-  animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
         setTimeout(() => {
@@ -273,6 +294,9 @@ export default class PathfindingVisualizer extends Component {
         this.animateShortestPath(nodesInShortestPathOrder);
         setTimeout(() => {
           this.setState({ isVisualized: false, disableDropDown: false });
+          
+          // Show the result of the Algorithm after Visualization
+          this.showAlgorithmResults(visitedNodesInOrder, nodesInShortestPathOrder); 
       }, animationSpeed * visitedNodesInOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
@@ -297,31 +321,6 @@ export default class PathfindingVisualizer extends Component {
       }, animationSpeed * visitedNodesInOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
-
-  // animateDFS(visitedNodesInOrder, nodesInShortestPathOrder) {
-  //   const { animationSpeed } = this.state;
-  //   let timeoutCounter = 0;
-  
-  //   for (let i = 0; i < visitedNodesInOrder.length; i++) {
-  //     setTimeout(() => {
-  //       const node = visitedNodesInOrder[i];
-  //       const nodeClassName = document.getElementById(`node-${node.row}-${node.col}`).className;
-  //       if (nodeClassName !== 'node node-start' && nodeClassName !== 'node node-finish') {
-  //         document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
-  //       }
-  
-  //       timeoutCounter++;
-  //       if (timeoutCounter === visitedNodesInOrder.length) {
-  //         setTimeout(() => {
-  //           this.animateShortestPathDFS(nodesInShortestPathOrder);
-  //           setTimeout(() => {
-  //             this.setState({ isVisualized: false, disableDropDown: false });
-  //           }, animationSpeed * nodesInShortestPathOrder.length);
-  //         }, animationSpeed * visitedNodesInOrder.length);
-  //       }
-  //     }, animationSpeed * i);
-  //   }
-  // }
 
   animateShortestPathAStar(nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
@@ -439,6 +438,13 @@ export default class PathfindingVisualizer extends Component {
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
     this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  showAlgorithmResults(visitedNodes, nodesInShortestPathOrder){
+    const { timeComplexity, spaceComplexity } = calculateComplexity(visitedNodes);
+    const message = `Total No. of Visited Nodes: ${visitedNodes.length}\n` + 
+                    `Nodes in Shortest Path: ${nodesInShortestPathOrder.length}\n`;
+    this.showInfo(message);
   }
 
 resetGrid() {
@@ -632,3 +638,10 @@ const getNewGridWithNewTarget = (grid, row, col) => {
   return newGrid;
 
 }
+
+// Function to calculate time and space complexity
+const calculateComplexity = (visitedNodes) => {
+  const timeComplexity = visitedNodes.length; // Assuming each visit takes constant time
+  const spaceComplexity = new Set(visitedNodes.map(node => `${node.row}-${node.col}`)).size;
+  return { timeComplexity, spaceComplexity };
+};
