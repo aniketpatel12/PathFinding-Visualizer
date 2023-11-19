@@ -127,22 +127,25 @@ export default class PathfindingVisualizer extends Component {
     }
 
     if (startNodeSurrounded) {
-      this.showAlert('Start node is fully covered by walls!');
+      const message = `START NODE IS FULLY COVERED WITH WALLS!\n` + 
+                      `PLEASE ADUST THE WALLS.\n`;
+      this.showAlert(message);
       return;
     }
 
     if (targetNodeSurrounded) {
-      this.showAlert('Target node is fully covered by walls!');
+      const message = `START NODE IS FULLY COVERED WITH WALLS!\n` + 
+                      `PLEASE ADUST THE WALLS.\n`;
+      this.showAlert(message);
       return; 
     }
   
     if (!selectedAlgorithm || selectedAlgorithm === 'Select an algorithm') {
-      this.showAlert('Please select an algorithm first!');
+      this.showAlert('PLEASE SELECT AN ALGORITHM FIRST!');
       return;
     }
 
     if (selectedAlgorithm === 'Dijkstra') {
-      console.log("Inside Dijkstra Visualizaton");
       this.VisualizeDijkstra();
     } else if (selectedAlgorithm === 'A* Search Algorithm') {
       this.VisualizeAStarSearch();
@@ -184,8 +187,11 @@ export default class PathfindingVisualizer extends Component {
 
   showAlert(message) {
     Swal.fire({
-      title: 'ALERT',
-      text: message,
+      title: 'ERROR',
+      html: '<pre>' + message + '</pre>',
+      customClass: {
+        popup: 'description'
+      },
       icon: 'error',
       confirmButtonColor: '#2ecc71',
       confirmButtonText: 'OK'
@@ -369,14 +375,13 @@ export default class PathfindingVisualizer extends Component {
   }
 
   VisualizeDijkstra(){
-    console.log("Visualize Dijkstra");
     const {grid} = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
     const visitedNodesInOrder = dijkstra(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
   }
 
   VisualizeAStarSearch() {
@@ -384,16 +389,10 @@ export default class PathfindingVisualizer extends Component {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const targetNode = grid[TARGET_NODE_ROW][TARGET_NODE_COL];
-
-    if (targetNode.isWall) {
-      this.showAlert('Target node is covered by a wall. Please choose a valid target !!!');
-      return;
-    }
-
     const visitedNodesInOrder = aStarSearch(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder);
+    this.animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
   }
 
   VisualizeDFS() {
@@ -403,7 +402,7 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = depthFirstSearch(grid, startNode, targetNode); // Call the DFS algorithm
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);
+    this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
   }
 
   VisualizeBFS() {
@@ -413,14 +412,19 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = bfs(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
+    this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
   }
 
   showAlgorithmResults(visitedNodes, nodesInShortestPathOrder){
-    const { timeComplexity, spaceComplexity } = calculateComplexity(visitedNodes);
-    const message = `Total No. of Visited Nodes: ${visitedNodes.length}\n` + 
-                    `Nodes in Shortest Path: ${nodesInShortestPathOrder.length}\n`;
-    this.showInfo(message);
+    const isPathFound = visitedNodes.some(node => node.row === TARGET_NODE_ROW && node.col === TARGET_NODE_COL);    console.log(isPathFound)
+    const message = `TOTAL NO. OF VISITED NODES: ${visitedNodes.length}\n` + 
+                    `TOTAL NO. OF VISITED NODES IN SHOTEST PATH: ${nodesInShortestPathOrder.length}\n`;
+    if (isPathFound) {
+      this.showInfo(message);
+    } else{
+      const errorMessage = `CANNOT FIND A PATH!`
+      this.showAlert(errorMessage)
+    }
   }
 
   showUserManual(){
