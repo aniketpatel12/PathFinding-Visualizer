@@ -38,7 +38,7 @@
   outline: 1px solid #000000;
   display: inline-block;
   margin: 3px; /* Adjust the margin to add spacing between nodes */
-  border-radius: 20%;
+  border-radius: 15%;
 }
 
 .node-finish {
@@ -153,8 +153,8 @@
     border-radius: 5px;
     background-color: #fff;
     cursor: pointer;
-    width: 250px; /* Set a fixed width for the drop-down menu and buttons */
-    height: 40px; /* Set a fixed height for the drop-down menu and buttons */
+    width: 230px; /* Set a fixed width for the drop-down menu and buttons */
+    height: 35px; /* Set a fixed height for the drop-down menu and buttons */
   }
 
 .custom-select:focus {
@@ -173,7 +173,7 @@
 
 button {
     margin: 10px;
-    padding: 10px 20px;
+    padding: 8px 10px;
     font-size: 16px;
     text-transform: uppercase;
     border: none;
@@ -241,9 +241,81 @@ body {
 }
 
 .format-pre pre {
-  background: #49483e;
-  color: #f7f7f7;
   padding: 10px;
   font-size: 14px;
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+}
+
+.how-to-use-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Add this to separate node and description */
+  margin-bottom: 10px;
+  padding: 5px;
+  width: auto; /* Add padding for better spacing */
+}
+
+.node-start {
+  background-color: #6cbf5d;
+}
+
+.node-finish {
+  background-color: #ed6255;
+}
+
+.node-wall {
+  background-color: #444;
+}
+
+.node-shortest {
+  background-color:  rgb(255, 254, 106);
+}
+
+.node-visited {
+  background-color:  rgb(255, 254, 106);
+}
+  
+.button-visualize {
+  background-color: #3498db;
+}
+
+.button-clear-all {
+  background-color: #e74c3c;
+}
+
+.button-clear-path {
+  background-color: #f39c12;
+}
+
+.button-how-to-use {
+  background-color: #2ecc71;
+}
+
+.description {
+  flex: 1;
+  text-align: left;
+  margin-left: 8px;
+  text-transform: uppercase;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+}
+
+.title-line {
+  content: '';
+  display: block;
+  width: 230px;
+  height: 2px;
+  background-color: #4caf50; 
+  margin: 3px auto;
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+
+.information-line {
+  content: '';
+  display: block;
+  width: 500px;
+  height: 1px;
+  background-color: #4caf50; 
+  margin: 10px auto;
 }

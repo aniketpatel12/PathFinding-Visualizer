@@ -151,29 +151,7 @@ export default class PathfindingVisualizer extends Component {
     } else if (selectedAlgorithm === 'BFS') {
       this.VisualizeBFS();
     }
-
-    // if (isSafeToVisualize){
-    // } 
   };
-
-  // checkStartAndTargetNodes = () => {
-  //   const { grid } = this.state;
-
-  //   // Logic to check if start and target nodes are covered with walls
-  //   const isStartNodeCovered = this.isNodeFullyCovered(grid, this.getStartNode());
-  //   const isTargetNodeCovered = this.isNodeFullyCovered(grid, this.getTargetNode());
-
-  //   // Display an alert if the target node is fully covered
-  //   if (isTargetNodeCovered) {
-  //     this.setState({
-  //       isAlertVisible: true,
-  //       alertMessage: "Target node is fully covered with walls. Please adjust the walls.",
-  //     });
-  //   }
-
-  //   // Return true if it's safe to start visualization, false otherwise
-  //   return !isTargetNodeCovered;
-  // };
 
   isNodeFullyCovered = (grid, node) => {
     const { row, col } = node;
@@ -206,31 +184,23 @@ export default class PathfindingVisualizer extends Component {
 
   showAlert(message) {
     Swal.fire({
-      title: 'Alert',
+      title: 'ALERT',
       text: message,
       icon: 'error',
-      confirmButtonColor: '#3085d6',
+      confirmButtonColor: '#2ecc71',
       confirmButtonText: 'OK'
     });
   } 
 
   showInfo(message){
-    // Swal.fire({
-    //   position: "top-end",
-    //   icon: "success",
-    //   title: "Visualization Completed",
-    //   text: message,
-    //   confirmButtonColor: '#3085d6',
-    //   confirmButtonText: 'OK'
-    // });
     Swal.fire({
       html: '<pre>' + message + '</pre>',
       customClass: {
-        popup: 'format-pre'
+        popup: 'description'
       },
       icon: 'success',
-      title: "Visualization Completed",
-      confirmButtonColor: '#3085d6',
+      title: "VISUALIZATION COMPLETED",
+      confirmButtonColor: '#2ecc71',
       confirmButtonText: 'Ok'
     });
   }
@@ -318,6 +288,8 @@ export default class PathfindingVisualizer extends Component {
         this.animateShortestPathAStar(nodesInShortestPathOrder);
         setTimeout(() => {
           this.setState({ isVisualized: false, disableDropDown: false });
+          // Show the result of the Algorithm after Visualization
+          this.showAlgorithmResults(visitedNodesInOrder, nodesInShortestPathOrder);
       }, animationSpeed * visitedNodesInOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
@@ -351,6 +323,8 @@ export default class PathfindingVisualizer extends Component {
       this.animateShortestPath(nodesInShortestPathOrder);
       setTimeout(() => {
         this.setState({ isVisualized: false, disableDropDown: false });
+        // Show the result of the Algorithm after Visualization
+        this.showAlgorithmResults(visitedNodesInOrder, nodesInShortestPathOrder);
       }, animationSpeed * nodesInShortestPathOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
@@ -371,6 +345,8 @@ export default class PathfindingVisualizer extends Component {
       this.animateShortestPath(nodesInShortestPathOrder);
       setTimeout(() => {
         this.setState({ isVisualized: false, disableDropDown: false });
+        // Show the result of the Algorithm after Visualization
+        this.showAlgorithmResults(visitedNodesInOrder, nodesInShortestPathOrder);
       }, animationSpeed * visitedNodesInOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
@@ -445,6 +421,51 @@ export default class PathfindingVisualizer extends Component {
     const message = `Total No. of Visited Nodes: ${visitedNodes.length}\n` + 
                     `Nodes in Shortest Path: ${nodesInShortestPathOrder.length}\n`;
     this.showInfo(message);
+  }
+
+  showUserManual(){
+    Swal.fire({
+      title: 'HOW TO USE?',
+      html: `
+      <div class="title-line"></div><br>
+      <div class="how-to-use-item">
+        <div class="node node-start"></div>
+        <div class="description">Start Node</div>
+        <div class="node node-finish"></div>
+        <div class="description">Target Node</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="node node-shortest"></div>
+        <div class="description">Shortest Node</div>
+        <div class="node node-visited"></div>
+        <div class="description">Visited Node</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="node node-wall"></div>
+        <div class="description">Wall Node - Click to Place or Remove</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="information-line"></div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="description">1. Move Start Node and Target Node by dragging</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="description">2. Make Walls by clicking on any node</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="description">3. Move the wall by dragging</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="description">4. Select the Animation Speed and Algorithm from the drop-down menu</div>
+      </div>
+      <div class="how-to-use-item">
+        <div class="description">5. Visualize the Selected Algorithm</div>
+      </div>
+      `,
+      confirmButtonText: 'Ok',
+      confirmButtonColor: '#2ecc71'
+    });
   }
 
 resetGrid() {
@@ -524,6 +545,9 @@ render() {
             </button>
             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearPath()} disabled={isVisualized || disableDropDown}>
               Clear Path
+            </button>
+            <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.showUserManual()} disabled={isVisualized || disableDropDown}>
+              How to use?
             </button>
           </div>
         </div>
