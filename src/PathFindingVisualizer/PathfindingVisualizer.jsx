@@ -140,19 +140,21 @@ export default class PathfindingVisualizer extends Component {
       return; 
     }
   
-    if (!selectedAlgorithm || selectedAlgorithm === 'Select an algorithm') {
-      this.showAlert('PLEASE SELECT AN ALGORITHM FIRST!');
-      return;
-    }
-
-    if (selectedAlgorithm === 'Dijkstra') {
-      this.VisualizeDijkstra();
-    } else if (selectedAlgorithm === 'A* Search Algorithm') {
-      this.VisualizeAStarSearch();
-    } else if (selectedAlgorithm === 'DFS') {
-      this.VisualizeDFS();
-    } else if (selectedAlgorithm === 'BFS') {
-      this.VisualizeBFS();
+    switch (selectedAlgorithm) {
+      case 'A* Search':
+        this.VisualizeAStarSearch();
+        break;
+      case 'BFS':
+        this.VisualizeBFS();
+        break;
+      case 'DFS':
+        this.VisualizeDFS();
+        break;
+      case 'Dijkstra':
+        this.VisualizeDijkstra();
+        break;
+      default:
+        this.showAlert('Please Algorithm first!');
     }
   };
 
@@ -356,6 +358,7 @@ export default class PathfindingVisualizer extends Component {
       }, animationSpeed * visitedNodesInOrder.length);
     }, animationSpeed * visitedNodesInOrder.length);
   }
+
   
   animateShortestPath(nodesInShortestPathOrder) {
     const { animationSpeed } = this.state;
@@ -381,7 +384,7 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = dijkstra(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
   VisualizeAStarSearch() {
@@ -392,7 +395,7 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = aStarSearch(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
+    this.animateAStarSearch(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
   VisualizeDFS() {
@@ -402,7 +405,7 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = depthFirstSearch(grid, startNode, targetNode); // Call the DFS algorithm
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
+    this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
   VisualizeBFS() {
@@ -412,9 +415,9 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = bfs(grid, startNode, targetNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(targetNode);
     this.setState({ isVisualized: true });
-    this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder, targetNode);
+    this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder);
   }
-
+  
   showAlgorithmResults(visitedNodes, nodesInShortestPathOrder){
     const isPathFound = visitedNodes.some(node => node.row === TARGET_NODE_ROW && node.col === TARGET_NODE_COL);    console.log(isPathFound)
     const message = `TOTAL NO. OF VISITED NODES: ${visitedNodes.length}\n` + 
@@ -495,7 +498,7 @@ resetGrid() {
 render() {
 
   const {grid, mouseIsPressed, disableDropDown, isVisualized} = this.state;
-  const algorithms = ['Select an algorithm', 'A* Search Algorithm', 'BFS', 'DFS', 'Dijkstra'];
+  const algorithms = ['Algorithm', 'A* Search','BFS', 'DFS', 'Dijkstra'];
   const { isAlgorithmSelected } = this.state;
   const title = "PATHFINDING  VISUALIZER";
   const lastLetter = title.charAt(title.length - 1);
@@ -541,7 +544,7 @@ render() {
             </button>
             {isAlgorithmSelected === false && (
               <div className="alert">
-                Please select an algorithm first!
+                Please Algorithm first!
               </div>
             )}
             <button className={disableDropDown || isVisualized ? 'disabled-button' : ''} onClick={() => this.clearAll()} disabled={isVisualized || disableDropDown}>
@@ -592,20 +595,7 @@ render() {
     );
   }
 }
-
-  // Function to show the alert box and blur the background
-  function showAlert() {
-    document.body.classList.add('blurred');
-    document.getElementById('alert-box').style.display = 'block';
-  }
   
-  // Function to close the alert box and remove the blur
-  function closeAlertBox() {
-    document.body.classList.remove('blurred');
-    document.getElementById('alert-box').style.display = 'none';
-  }
-  
-
 // create the initialGrid setup
 const setUpInitialGrid = () => {
     const grid = [];
@@ -667,9 +657,3 @@ const getNewGridWithNewTarget = (grid, row, col) => {
 
 }
 
-// Function to calculate time and space complexity
-const calculateComplexity = (visitedNodes) => {
-  const timeComplexity = visitedNodes.length; // Assuming each visit takes constant time
-  const spaceComplexity = new Set(visitedNodes.map(node => `${node.row}-${node.col}`)).size;
-  return { timeComplexity, spaceComplexity };
-};

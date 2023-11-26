@@ -12,41 +12,42 @@
 .first-letter {
   font-size: 150%;
   font-weight: lighter;
-  color: #4caf50;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  color: #43AA8B;
 }
 
 .last-letter {
   font-size: 150%;
   font-weight: lighter;
-  color: #4caf50;
+  color: #43AA8B;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
 }
-
-
 
 .header::after {
   content: '';
   display: block;
   width: 500px;
   height: 2px;
-  background-color: #4caf50; /* Adjust the color as needed */
+  background-color: #43AA8B; 
   margin: 10px auto;
 }
 
 .node {
-  width: 30px; /* Adjust the width of each node */
-  height: 30px; /* Adjust the height of each node */
+  width: 30px; 
+  height: 30px; 
   outline: 1px solid #000000;
+  /* background-color: #E2DCDE; */
   display: inline-block;
-  margin: 3px; /* Adjust the margin to add spacing between nodes */
+  margin: 2px; 
   border-radius: 15%;
 }
 
 .node-finish {
-  background-color: #ff0000; /* Change this color to the desired finish node color */
+  background-color: #AF1B3F;
 }
 
 .node-start {
-  background-color: #4caf50; /* Change this color to the desired start node color */
+  background-color: #26532B; 
 }
 
 .node-visited {
@@ -69,7 +70,8 @@
     }
 
     50% {
-        background-color: rgba(17, 104, 217, 0.75);
+        /* background-color: rgba(17, 104, 217, 0.75);  */
+        background-color: #006992;
     }
 
     75% {
@@ -79,12 +81,14 @@
 
     100% {
         transform: scale(1);
-        background-color: rgba(0, 190, 218, 0.75);
+        /* background-color: rgba(0, 190, 218, 0.75); */
+        background-color: #006992;
+
     }
 }
 
 .node-wall {
-    background-color: rgb(12, 53, 71);
+    background-color: #071013;
 }
 
 .node-shortest-path {
@@ -101,18 +105,21 @@
 @keyframes shortestPath {
     0% {
         transform: scale(0.6);
-        background-color: rgb(255, 254, 106);
+        /* background-color: rgb(255, 254, 106); */
+        background-color: #ECA400;
     }
 
     50% {
         transform: scale(1.2);
-        background-color: rgb(255, 254, 106);
+        /* background-color: rgb(255, 254, 106); */
+        background-color: #ECA400;
     }
 
     100% {
         transform: scale(1);
-        background-color: rgb(255, 254, 106);
-    }
+        /* background-color: rgb(255, 254, 106); */
+        background-color: #ECA400;
+      }
 }
   
 .control-panel {
@@ -153,8 +160,8 @@
     border-radius: 5px;
     background-color: #fff;
     cursor: pointer;
-    width: 230px; /* Set a fixed width for the drop-down menu and buttons */
-    height: 35px; /* Set a fixed height for the drop-down menu and buttons */
+    width: 150px; 
+    height: 35px; 
   }
 
 .custom-select:focus {
@@ -178,7 +185,7 @@ button {
     text-transform: uppercase;
     border: none;
     border-radius: 5px;
-    background-color: #4caf50;
+    background-color: #43AA8B;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -228,9 +235,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: light;
+  font-weight: lighter;
   font-size: large;
-  margin-top: 15px; /* Adjust as needed */
+  margin-top: 20px; /* Adjust as needed */
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
 }
 
@@ -256,39 +263,23 @@ body {
 }
 
 .node-start {
-  background-color: #6cbf5d;
+  background-color: #2D2D34;
 }
 
 .node-finish {
-  background-color: #ed6255;
+  background-color: #2D2D34;
 }
 
 .node-wall {
-  background-color: #444;
+  background-color: #772014 ;
 }
 
 .node-shortest {
-  background-color:  rgb(255, 254, 106);
+  background-color:  #ECA400;
 }
 
 .node-visited {
-  background-color:  rgb(255, 254, 106);
-}
-  
-.button-visualize {
-  background-color: #3498db;
-}
-
-.button-clear-all {
-  background-color: #e74c3c;
-}
-
-.button-clear-path {
-  background-color: #f39c12;
-}
-
-.button-how-to-use {
-  background-color: #2ecc71;
+  background-color: #ECA400;
 }
 
 .description {
